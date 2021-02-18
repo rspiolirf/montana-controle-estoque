@@ -18,8 +18,15 @@ class RepositorioInsumo:
     return insumo
   
   def Adicionar(self, insumoInputModel):
-    insumo = Insumo(insumoInputModel['codigo_insumo'], insumoInputModel['descricao'], int(insumoInputModel['unidades_pacote']))
+    insumo = Insumo(insumoInputModel['codigo_insumo'], insumoInputModel['descricao'], int(insumoInputModel['unidades_pacote']), int(insumoInputModel['ordem']))
     self.insumos.append(insumo)
+    self.Salvar()
+
+  def Atualizar(self, insumoInputModel):
+    insumo = next((insumo for insumo in self.insumos if insumo.codigo_insumo == insumoInputModel['codigo_insumo']), None)
+    insumo.descricao = insumoInputModel['descricao']
+    insumo.unidades_pacotes = insumoInputModel['unidades_pacote']
+    insumo.ordem = int(insumoInputModel['ordem'])
     self.Salvar()
 
   def Excluir(self, id):
@@ -57,7 +64,7 @@ class RepositorioInsumo:
       codigo_insumo = sheet['A' + str(x)].value
       descricao = sheet['B' + str(x)].value
       unidades_pacote = sheet['C' + str(x)].value
-      ordem = sheet['D' + str(x)].value
+      ordem = sheet['D' + str(x)].value or 0
       insumos.append(Insumo(codigo_insumo, descricao, unidades_pacote, ordem))
       
     return insumos

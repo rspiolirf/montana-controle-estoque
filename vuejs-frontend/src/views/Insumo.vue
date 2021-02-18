@@ -101,6 +101,19 @@
                 </v-col>
               </v-row>
 
+              <v-row class="mt-4">
+                <v-col cols="6">
+                  <v-text-field
+                    label="Ordem de Apresentação"
+                    placeholder=" "
+                    outlined
+                    dense
+                    hide-details="auto"
+                    v-model="insumo.ordem"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+
             </v-container>
           </v-card-text>
 
@@ -137,7 +150,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="yellow darken-1" text @click="confirmaExclusaoDialogo = false">Cancelar</v-btn>
-          <v-btn class="mr-5" color="red darken-1" text @click="deletarInsumo">Excluir</v-btn>
+          <v-btn class="mr-5" color="red darken-1" text @click="excluirInsumo">Excluir</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -155,7 +168,6 @@ export default {
     store,
     insumo: {},
     insumoDialogo: false,
-    desabilitarBotaoSalvar: false,
     ehNovoInsumo: false,
     exibirSnackbar: false,
     snackbarMensagem: '',
@@ -164,7 +176,7 @@ export default {
       { text: 'Ordem', align: 'center', value: 'ordem', sortable: true },
       { text: 'Codigo', align: 'center', value: 'codigo_insumo', sortable: true },
       { text: 'Descrição', align: 'start', sortable: true, value: 'descricao' },
-      { text: 'Unidades por Pacote', align: 'start', sortable: false, value: 'unidades_pacote' },
+      { text: 'Unidades por Pacote', align: 'center', sortable: false, value: 'unidades_pacote' },
       { text: 'Ações', align: 'center', value: 'actions', sortable: false }
     ]
   }),
@@ -191,36 +203,56 @@ export default {
 
     salvar() {
       if (this.ehNovoInsumo) {
-        // verifica se já existem um insumo com o mesmo código
-        const insumo = store.insumos.find(i => i.codigo_insumo === this.insumo.codigo_insumo)
-
-        if (insumo === undefined) {
-          store.insumos.push(this.insumo)
-          store.insumos.sort((a, b) => (Number(a.codigo_insumo) > Number(b.codigo_insumo)) ? 1 : ((Number(b.codigo_insumo) > Number(a.codigo_insumo)) ? -1 : 0))
-          this.persistirAlteracoes()
-        }
-        else {
-          this.snackbarMensagem = `Já existe um insumo com o código ${this.insumo.codigo_insumo}. Não é possível adicionar dois insumos com o mesmo código.`
-          this.exibirSnackbar = true
-        }
+        this.salvarNovoInsumo()
       }
       else {
-        const insumo = store.insumos.find(i => i.codigo_insumo === this.insumo.codigo_insumo)
-        insumo.descricao = this.insumo.descricao
-        insumo.unidades_pacote = this.insumo.unidades_pacote
-        this.persistirAlteracoes()
+        this.salvarInsumoExistente()
       }
     },
 
-    async persistirAlteracoes() {
+    insumoJaExiste() {
+      const insumo = store.insumos.find(i => i.codigo_insumo === this.insumo.codigo_insumo)
+      if (insumo === undefined)
+        return false
+      else
+        this.snackbarMensagem = `O insumo ${insumo.descricao} já está cadastrado com o código ${this.insumo.codigo_insumo}. Não é possível adicionar dois insumos com o mesmo código.`
+        this.exibirSnackbar = true
+        return true
+    },
+
+    async salvarNovoInsumo() {
+      if (this.insumoJaExiste()) return
+
+      store.insumos.push(this.insumo)
+      store.insumos.sort((a, b) => (Number(a.ordem) > Number(b.ordem)) ? 1 : ((Number(b.ordem) > Number(a.ordem)) ? -1 : 0))
+          
       await fetch(`${process.env.VUE_APP_BASE_URL}/api/insumos`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(store.insumos)
+        body: JSON.stringify(this.insumo)
       })
+      this.insumo = {}
+      this.insumoDialogo = false
+    },
+
+    async salvarInsumoExistente() {
+      const insumo = store.insumos.find(i => i.codigo_insumo === this.insumo.codigo_insumo)
+      insumo.descricao = this.insumo.descricao
+      insumo.unidades_pacote = this.insumo.unidades_pacote
+      insumo.ordem = this.insumo.ordem
+
+      await fetch(`${process.env.VUE_APP_BASE_URL}/api/insumos/${this.insumo.codigo_insumo}`, {
+        method: 'PUT',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(this.insumo)
+      })
+
       this.insumo = {}
       this.insumoDialogo = false
     },
@@ -230,11 +262,32 @@ export default {
       this.confirmaExclusaoDialogo = true
     },
 
-    deletarInsumo() {
-      store.insumos = store.insumos.filter(i => i.codigo_insumo !== this.insumo.codigo_insumo)
-      this.insumo = {}
-      this.confirmaExclusaoDialogo = false
-      this.persistirAlteracoes()
+    async excluirInsumo() {
+      try {
+        await fetch(`${process.env.VUE_APP_BASE_URL}/api/insumos/${this.insumo.codigo_insumo}`, {
+          method: 'DELETE'
+        })
+
+        store.insumos = store.insumos.filter(i => i.codigo_insumo !== this.insumo.codigo_insumo)
+        this.insumo = {}
+        this.confirmaExclusaoDialogo = false
+      }
+      catch {
+        console.log('erro ao excluir um insumo')
+      }
+    }
+  },
+
+  computed: {
+    desabilitarBotaoSalvar() {
+      if (this.insumo && 
+          this.insumo.codigo_insumo && 
+          this.insumo.descricao &&
+          this.insumo.unidades_pacote &&
+          this.insumo.ordem)
+          return false
+      else
+        return true
     }
   }
 }
