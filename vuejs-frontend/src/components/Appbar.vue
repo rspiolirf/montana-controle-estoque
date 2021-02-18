@@ -7,7 +7,7 @@
   >
     <v-img
       style="cursor: pointer"
-      @click="$router.push('/')"
+      @click="irParaHome"
       contain
       src="../assets/logotipo.png"
       height="32"
@@ -19,6 +19,17 @@
     <v-btn depressed color="primary" to="/controleestoque">Controle de Estoque</v-btn>
   </v-app-bar>    
 </template>
+
+<script>
+export default {
+  methods: {
+    irParaHome() {
+      if (this.$route.name !== 'Home')
+        this.$router.push('/')
+    }
+  }
+}
+</script>
 
 // #fede20 amarelo
 // vermelho #cd2c16

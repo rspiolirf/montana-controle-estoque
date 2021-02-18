@@ -31,6 +31,7 @@
     <v-row>
       <v-col>
         <v-data-table
+          sort-by="ordem"
           disable-pagination
           locale="pt"
           hide-default-footer
@@ -152,7 +153,6 @@ export default {
 
   data: () => ({
     store,
-    insumos: [],
     insumo: {},
     insumoDialogo: false,
     desabilitarBotaoSalvar: false,
@@ -161,12 +161,20 @@ export default {
     snackbarMensagem: '',
     confirmaExclusaoDialogo: false,
     headers: [
+      { text: 'Ordem', align: 'center', value: 'ordem', sortable: true },
       { text: 'Codigo', align: 'center', value: 'codigo_insumo', sortable: true },
       { text: 'Descrição', align: 'start', sortable: true, value: 'descricao' },
       { text: 'Unidades por Pacote', align: 'start', sortable: false, value: 'unidades_pacote' },
       { text: 'Ações', align: 'center', value: 'actions', sortable: false }
     ]
   }),
+
+  async created() {
+    if (store.insumos.length === 0) {
+      let response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/insumos`)
+      store.insumos = await response.json()
+    }
+  },
 
   methods: {
     abrirDialogoInsumo(item, ehNovoInsumo) {
