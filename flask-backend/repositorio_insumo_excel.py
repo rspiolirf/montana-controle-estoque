@@ -18,7 +18,7 @@ class RepositorioInsumo:
     return insumo
   
   def Adicionar(self, insumoInputModel):
-    insumo = Insumo(insumoInputModel['codigo_insumo'], insumoInputModel['descricao'], insumoInputModel['unidades_pacote'])
+    insumo = Insumo(insumoInputModel['codigo_insumo'], insumoInputModel['descricao'], int(insumoInputModel['unidades_pacote']))
     self.insumos.append(insumo)
     self.Salvar()
 
@@ -54,10 +54,11 @@ class RepositorioInsumo:
     # recupera os insumos da planilha    
     insumos = []
     for x in range(self.LINHA_INICIAL_DADOS, total_linhas_dados + self.LINHA_INICIAL_DADOS):
-      codigo_insumo = str(sheet['A' + str(x)].value)
+      codigo_insumo = sheet['A' + str(x)].value
       descricao = sheet['B' + str(x)].value
       unidades_pacote = sheet['C' + str(x)].value
-      insumos.append(Insumo(codigo_insumo, descricao, unidades_pacote))
+      ordem = sheet['D' + str(x)].value
+      insumos.append(Insumo(codigo_insumo, descricao, unidades_pacote, ordem))
       
     return insumos
 

@@ -9,7 +9,6 @@ from repositorio_insumo_excel import RepositorioInsumo
 from repositorio_produto_excel import RepositorioProduto
 from repositorio_estoque_excel import RepositorioEstoque
 from repositorio_vendas_excel import RepositorioVendas
-from insumo import Insumo
 from tipo_estoque import TipoEstoque
 
 app = Flask(__name__, static_url_path='')
@@ -30,7 +29,7 @@ def ObterInsumos():
   for insumo in insumos:
     result.append(insumo.serialize())
   
-  return jsonify({ 'data': result })
+  return jsonify(result)
 
 @app.route('/api/insumos', methods = ['POST'])
 def InserirInsumo():
@@ -60,7 +59,6 @@ def ExcluirInsumo(id):
 # produtos
 @app.route('/api/produtos', methods = ['GET'])
 def ObterProdutos():
-  # repositorio_produto = RepositorioProduto(RepositorioInsumo())
   produtos = repositorio_produto.ObterTodos()
   result = []
   for produto in produtos:
