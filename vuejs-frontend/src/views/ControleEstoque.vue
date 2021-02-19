@@ -186,6 +186,7 @@
               PROCESSAR
             </v-btn>
             <v-btn
+              :loading="loadingExportarContagemEstoque"
               class="ml-3"
               color="success"
               @click="exportarParaExcel"
@@ -288,6 +289,7 @@ export default {
     dadosRelatorioVendas: [],
 
     loadingContagemEstoque: false,
+    loadingExportarContagemEstoque: false,
 
     headersEstoque: [
       { text: 'Codigo', align: ' d-none', value: 'insumo.codigo_insumo', sortable: true },
@@ -360,8 +362,10 @@ export default {
       this.loading = false
     },
 
-    exportarParaExcel() {
-      console.log('exportar resultado para o Excel')
+    async exportarParaExcel() {
+      this.loadingExportarContagemEstoque = true
+      await fetch(`${process.env.VUE_APP_BASE_URL}/api/contagemestoqueparaexcel`)      
+      this.loadingExportarContagemEstoque = false
     },
 
     obterCor(diferencial, vendas) {

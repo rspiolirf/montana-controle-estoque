@@ -4,6 +4,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from os import listdir
 from os.path import isfile, join
+from openpyxl import Workbook
 
 from repositorio_insumo_excel import RepositorioInsumo
 from repositorio_produto_excel import RepositorioProduto
@@ -187,3 +188,14 @@ def ProcessarContagemEstoque():
     'data_estoque_final': estoque_final.data,
     'relatorio_itens': relatorio_itens
   })
+
+@app.route('/api/contagemestoqueparaexcel', methods = ['GET'])
+def ExportarContagemEstoque():
+  workbook = Workbook()
+  worksheet = workbook.active
+  worksheet.title = 'Resultado'
+  worksheet['A1'] = 'Bife Argentino'
+  worksheet['B1'] = 1
+  workbook.save('resultado.xlsx')
+
+  return 'Sucesso'
