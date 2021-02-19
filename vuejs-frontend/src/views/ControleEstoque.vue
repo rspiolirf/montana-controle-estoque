@@ -314,6 +314,7 @@ export default {
       { text: 'Estoque Final', align: 'center', sortable: false, value: 'estoque_final' },
       { text: 'Diferencial', align: 'center', sortable: false, value: 'diferencial' },
       { text: 'Vendas', align: 'center', sortable: false, value: 'vendas' },
+      { text: 'Total', align: 'center', sortable: false, value: 'diferencial_total' },
       { text: '', align: 'center', sortable: false, value: 'flag' },
     ]
   }),
@@ -365,10 +366,7 @@ export default {
     },
 
     async exportarParaExcel() {
-      this.loadingExportarContagemEstoque = true
-      await fetch(`${process.env.VUE_APP_BASE_URL}/api/contagemestoqueparaexcel`)      
-      this.loadingExportarContagemEstoque = false
-      window.location = `${process.env.VUE_APP_BASE_URL}/resultado.xlsx`
+      window.location = `${process.env.VUE_APP_BASE_URL}/api/contagemestoqueparaexcel`
     },
 
     obterCor(diferencial, vendas) {

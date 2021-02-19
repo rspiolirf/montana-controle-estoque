@@ -1,6 +1,6 @@
 import os
 import config
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
 from os import listdir
 from os.path import isfile, join
@@ -179,7 +179,8 @@ def ProcessarContagemEstoque():
         'estoque_final_unidades': estoque_item_final.unidades,
         'estoque_final_total': estoque_item_final.total,
         'diferencial': estoque_item_final.total - estoque_item.total,
-        'vendas': vendas_por_produto
+        'vendas': vendas_por_produto,
+        'diferencial_total': estoque_item_final.total - estoque_item.total + vendas_por_produto
       }
     )
 
@@ -214,7 +215,7 @@ def ExportarContagemEstoque():
 
     relatorio_itens.append(
       {
-        'ordem': str(estoque_item.insumo.ordem),
+        'ordem': int(estoque_item.insumo.ordem),
         'codigo_insumo': str(estoque_item.insumo.codigo_insumo),
         'descricao': estoque_item.insumo.descricao,
         'estoque_inicial_pacotes': estoque_item.pacotes,
@@ -223,7 +224,7 @@ def ExportarContagemEstoque():
         'estoque_final_pacotes': estoque_item_final.pacotes,
         'estoque_final_unidades': estoque_item_final.unidades,
         'estoque_final_total': estoque_item_final.total,
-        'diferencial': estoque_item_final.total - estoque_item.total,
+        'diferencial_estoque': estoque_item_final.total - estoque_item.total,
         'vendas': vendas_por_produto
       }
     )
@@ -232,11 +233,22 @@ def ExportarContagemEstoque():
   sheet = workbook.active
   sheet.title = 'resultado'
 
-  for i, item in enumerate(relatorio_itens):
-    sheet['A' + str(i + 1)] = item['descricao']
-    sheet['B' + str(i + 1)] = item['estoque_inicial_unidades']
-    sheet['C' + str(i + 1)] = item['vendas']
-  
-  workbook.save('./static/resultado.xlsx')
+  sheet['A1'] = 'insumo'
+  sheet['B1'] = 'estoque_inicial_unidades'
+  sheet['C1'] = 'vendas_unidades'
+  relatorio_itens_ordenados = sorted(relatorio_itens, key=lambda k: k['ordem'])
+  for i, item in enumerate(relatorio_itens_ordenados):
+    sheet['A' + str(i + 2)] = item['descricao']
+    sheet['B' + str(i + 2)] = item['estoque_inicial_total']
+    sheet['C' + str(i + 2)] = item['vendas']
 
-  return 'Sucesso'
+  from tempfile import NamedTemporaryFile
+  with NamedTemporaryFile() as tmp:
+    workbook.save(tmp.name)
+
+    tmp.seek(0)
+    stream = tmp.read()
+  
+  # workbook.save('./static/resultado.xlsx')
+  # return Response('ola', mimetype='text/csv')
+  return Response(stream, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
