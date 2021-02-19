@@ -190,6 +190,7 @@
         <v-row class="mb-6">
           <v-col class="text-center">
             <v-data-table
+              sort-by="ordem"
               :loading="loading"
               loading-text="Carregando..."
               disable-pagination
@@ -288,7 +289,7 @@
       loadingContagemEstoque: false,
 
       headersEstoque: [
-        { text: 'Codigo', align: 'center', value: 'insumo.codigo_insumo', sortable: true },
+        { text: 'Codigo', align: ' d-none', value: 'insumo.codigo_insumo', sortable: true },
         { text: 'Descrição', align: 'start', sortable: true, value: 'insumo.descricao' },
         { text: 'Pacotes', align: 'center', sortable: false, value: 'pacotes' },
         { text: 'Unidades', align: 'center', sortable: false, value: 'unidades' },
@@ -302,7 +303,7 @@
       ],
 
       headersContagemEstoque: [
-        { text: 'Codigo', align: 'center', value: 'codigo_insumo', sortable: true },
+        { text: 'Codigo', align: ' d-none', value: 'codigo_insumo', sortable: true },
         { text: 'Descrição', align: 'start', sortable: true, value: 'descricao' },
         { text: 'Estoque Inicial', align: 'center', sortable: false, value: 'estoque_inicial' },
         { text: 'Estoque Final', align: 'center', sortable: false, value: 'estoque_final' },
@@ -311,6 +312,10 @@
         { text: '', align: 'center', sortable: false, value: 'flag' },
       ]
     }),
+
+    mounted() {
+      window.scrollTo(0, 0)
+    },
 
     methods: {
       async importarEstoque(tipo) {

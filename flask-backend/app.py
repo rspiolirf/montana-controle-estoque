@@ -168,6 +168,7 @@ def ProcessarContagemEstoque():
 
     relatorio_itens.append(
       {
+        'ordem': str(estoque_item.insumo.ordem),
         'codigo_insumo': str(estoque_item.insumo.codigo_insumo),
         'descricao': estoque_item.insumo.descricao,
         'estoque_inicial_pacotes': estoque_item.pacotes,

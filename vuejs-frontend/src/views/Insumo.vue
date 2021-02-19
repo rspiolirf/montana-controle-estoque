@@ -174,7 +174,7 @@ export default {
     confirmaExclusaoDialogo: false,
     headers: [
       { text: 'Ordem', align: 'center', value: 'ordem', sortable: true },
-      { text: 'Codigo', align: 'center', value: 'codigo_insumo', sortable: true },
+      { text: 'Codigo', align: ' d-none', value: 'codigo_insumo', sortable: true },
       { text: 'Descrição', align: 'start', sortable: true, value: 'descricao' },
       { text: 'Unidades por Pacote', align: 'center', sortable: false, value: 'unidades_pacote' },
       { text: 'Ações', align: 'center', value: 'actions', sortable: false }
@@ -186,6 +186,10 @@ export default {
       let response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/insumos`)
       store.insumos = await response.json()
     }
+  },
+  
+  mounted() {
+    window.scrollTo(0, 0)
   },
 
   methods: {
