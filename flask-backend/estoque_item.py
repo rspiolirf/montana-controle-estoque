@@ -1,8 +1,8 @@
 class EstoqueItem:
   def __init__(self, insumo, pacotes, unidades):
     self.insumo = insumo
-    self.pacotes = pacotes
-    self.unidades = unidades
+    self.pacotes = int(pacotes)
+    self.unidades = int(unidades)
     self.total = self.unidades + (self.pacotes * self.insumo.unidades_pacote)
 
   def serialize(self):

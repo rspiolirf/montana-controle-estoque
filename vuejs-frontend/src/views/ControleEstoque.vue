@@ -75,6 +75,7 @@
             <p class="mb-0" v-if="dadosEstoqueInicial.data">Data: {{ dadosEstoqueInicial.data }}</p>
             <p v-if="dadosEstoqueInicial.hora">Hora: {{ dadosEstoqueInicial.hora }}</p>
             <v-data-table
+              sort-by="insumo.ordem"
               :loading="loading"
               loading-text="Carregando..."
               disable-pagination
@@ -118,6 +119,7 @@
             <p class="mb-0" v-if="dadosEstoqueFinal.data">Data: {{ dadosEstoqueFinal.data }}</p>
             <p v-if="dadosEstoqueFinal.hora">Hora: {{ dadosEstoqueFinal.hora }}</p>
             <v-data-table
+              sort-by="insumo.ordem"
               :loading="loading"
               loading-text="Carregando..."
               disable-pagination

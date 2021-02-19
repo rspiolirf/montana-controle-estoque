@@ -121,7 +121,7 @@ def UploadEstoque():
   # obtém os dados do arquivo e retorna para o cliente
   tipo = TipoEstoque.INICIAL if request.args.get('tipo') == 'inicial' else TipoEstoque.FINAL
 
-  repositorio_estoque = RepositorioEstoque(tipo, RepositorioInsumo())
+  repositorio_estoque = RepositorioEstoque(tipo, repositorio_insumo)
   estoque = repositorio_estoque.Obter()
 
   return jsonify(estoque.serialize())
@@ -140,18 +140,16 @@ def UploadRelatorioVendas():
 
   # obtém os dados do arquivo e retorna para o cliente
 
-  repositorio_vendas = RepositorioVendas(RepositorioProduto(RepositorioInsumo()))
+  repositorio_vendas = RepositorioVendas(repositorio_produto)
   vendas = repositorio_vendas.ObterTodas()
 
   return jsonify(vendas.serialize())
 
 @app.route('/api/processarcontagemestoque', methods = ['GET'])
 def ProcessarContagemEstoque():
-  repositorio_insumo = RepositorioInsumo()
-  respositorio_produto = RepositorioProduto(repositorio_insumo)
   repositorio_estoque_inicial = RepositorioEstoque(TipoEstoque.INICIAL, repositorio_insumo)
   repositorio_estoque_final = RepositorioEstoque(TipoEstoque.FINAL, repositorio_insumo)
-  repositorio_vendas = RepositorioVendas(respositorio_produto)
+  repositorio_vendas = RepositorioVendas(repositorio_produto)
   
   estoque_inicial = repositorio_estoque_inicial.Obter()
   estoque_final = repositorio_estoque_final.Obter()
