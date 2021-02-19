@@ -198,6 +198,8 @@
         <v-row class="mb-6">
           <v-col class="text-center">
             <v-data-table
+              id="tabela"
+              ref="tabela"
               sort-by="ordem"
               :loading="loading"
               loading-text="Carregando..."
@@ -366,6 +368,7 @@ export default {
       this.loadingExportarContagemEstoque = true
       await fetch(`${process.env.VUE_APP_BASE_URL}/api/contagemestoqueparaexcel`)      
       this.loadingExportarContagemEstoque = false
+      window.location = `${process.env.VUE_APP_BASE_URL}/resultado.xlsx`
     },
 
     obterCor(diferencial, vendas) {

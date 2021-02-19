@@ -183,19 +183,60 @@ def ProcessarContagemEstoque():
       }
     )
 
-  return jsonify({
+  dadosContagemEstoque = {
     'data_estoque_inicial': estoque_inicial.data,
     'data_estoque_final': estoque_final.data,
     'relatorio_itens': relatorio_itens
-  })
+  }
+
+  return jsonify(dadosContagemEstoque)
 
 @app.route('/api/contagemestoqueparaexcel', methods = ['GET'])
 def ExportarContagemEstoque():
+  repositorio_estoque_inicial = RepositorioEstoque(TipoEstoque.INICIAL, repositorio_insumo)
+  repositorio_estoque_final = RepositorioEstoque(TipoEstoque.FINAL, repositorio_insumo)
+  repositorio_vendas = RepositorioVendas(repositorio_produto)
+  
+  estoque_inicial = repositorio_estoque_inicial.Obter()
+  estoque_final = repositorio_estoque_final.Obter()
+  vendas = repositorio_vendas.ObterTodas()
+  vendas_insumos = vendas.obterInsumos()
+
+  relatorio_itens = []
+  for estoque_item in estoque_inicial.estoque_itens:
+
+    estoque_item_final = next((x for x in estoque_final.estoque_itens if x.insumo.codigo_insumo == estoque_item.insumo.codigo_insumo), None)
+    vendas_por_produto = next((x for x in vendas_insumos if x.insumo.codigo_insumo == estoque_item.insumo.codigo_insumo), None)
+    if vendas_por_produto == None:
+      vendas_por_produto = 0
+    else:
+      vendas_por_produto = vendas_por_produto.quantidade
+
+    relatorio_itens.append(
+      {
+        'ordem': str(estoque_item.insumo.ordem),
+        'codigo_insumo': str(estoque_item.insumo.codigo_insumo),
+        'descricao': estoque_item.insumo.descricao,
+        'estoque_inicial_pacotes': estoque_item.pacotes,
+        'estoque_inicial_unidades': estoque_item.unidades,
+        'estoque_inicial_total': estoque_item.total,
+        'estoque_final_pacotes': estoque_item_final.pacotes,
+        'estoque_final_unidades': estoque_item_final.unidades,
+        'estoque_final_total': estoque_item_final.total,
+        'diferencial': estoque_item_final.total - estoque_item.total,
+        'vendas': vendas_por_produto
+      }
+    )
+
   workbook = Workbook()
-  worksheet = workbook.active
-  worksheet.title = 'Resultado'
-  worksheet['A1'] = 'Bife Argentino'
-  worksheet['B1'] = 1
-  workbook.save('resultado.xlsx')
+  sheet = workbook.active
+  sheet.title = 'resultado'
+
+  for i, item in enumerate(relatorio_itens):
+    sheet['A' + str(i + 1)] = item['descricao']
+    sheet['B' + str(i + 1)] = item['estoque_inicial_unidades']
+    sheet['C' + str(i + 1)] = item['vendas']
+  
+  workbook.save('./static/resultado.xlsx')
 
   return 'Sucesso'
