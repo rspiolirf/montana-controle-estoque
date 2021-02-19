@@ -185,6 +185,13 @@
             >
               PROCESSAR
             </v-btn>
+            <v-btn
+              class="ml-3"
+              color="success"
+              @click="exportarParaExcel"
+            >
+              EXPORTAR PARA EXCEL
+            </v-btn>
           </v-col>
         </v-row>
         <v-row class="mb-6">
@@ -197,7 +204,7 @@
               locale="pt"
               hide-default-footer
               :headers="headersContagemEstoque"
-              :items="dadosContagemEstoque.relatorio_itens"
+              :items="store.dadosContagemEstoque.relatorio_itens"
               class="elevation-1"
               item-key="produto.codigo_produto"
             >
@@ -205,7 +212,7 @@
                 <v-row>
                   <v-col class="pb-0">
                     {{ header.text }}
-                    <p class="text-body-2 mb-0">{{ dadosContagemEstoque.data_estoque_inicial }}</p>
+                    <p class="text-body-2 mb-0">{{ store.dadosContagemEstoque.data_estoque_inicial }}</p>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -219,7 +226,7 @@
                 <v-row>
                   <v-col class="pb-0">
                     {{ header.text }}
-                    <p class="text-body-2 mb-0">{{ dadosContagemEstoque.data_estoque_final }}</p>
+                    <p class="text-body-2 mb-0">{{ store.dadosContagemEstoque.data_estoque_final }}</p>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -255,14 +262,6 @@
             </v-data-table>
           </v-col>
         </v-row>
-
-        <v-btn
-          v-if="false"
-          color="primary"
-          @click="processarContagemEstoque"
-        >
-          PROCESSAR
-        </v-btn>
       </v-stepper-content>
     </v-stepper-items>
   </v-stepper>
@@ -270,116 +269,130 @@
 </template>
 
 <script>
-  export default {
-    name: 'ControleEstoque',
+import store from '../store/store'
 
-    data: () => ({
-      e1: 1,
-      arquivoExcelEstoqueInicial: null,
-      dadosEstoqueInicial: [],
-      loading: false,
-      
-      arquivoExcelEstoqueFinal: null,
-      dadosEstoqueFinal: [],
+export default {
+  name: 'ControleEstoque',
 
-      arquivoExcelRelatorioVendas: null,
-      dadosRelatorioVendas: [],
+  data: () => ({
+    store,
+    e1: 1,
+    arquivoExcelEstoqueInicial: null,
+    dadosEstoqueInicial: [],
+    loading: false,
+    
+    arquivoExcelEstoqueFinal: null,
+    dadosEstoqueFinal: [],
 
-      dadosContagemEstoque: {},
-      loadingContagemEstoque: false,
+    arquivoExcelRelatorioVendas: null,
+    dadosRelatorioVendas: [],
 
-      headersEstoque: [
-        { text: 'Codigo', align: ' d-none', value: 'insumo.codigo_insumo', sortable: true },
-        { text: 'Descrição', align: 'start', sortable: true, value: 'insumo.descricao' },
-        { text: 'Pacotes', align: 'center', sortable: false, value: 'pacotes' },
-        { text: 'Unidades', align: 'center', sortable: false, value: 'unidades' },
-        { text: 'Total', align: 'center', sortable: false, value: 'total' }
-      ],
+    loadingContagemEstoque: false,
 
-      headersRelatorioVendas: [
-        { text: 'Codigo', align: 'center', value: 'produto.codigo_produto', sortable: true },
-        { text: 'Descrição', align: 'start', sortable: true, value: 'produto.descricao' },
-        { text: 'Quantidade', align: 'center', sortable: false, value: 'quantidade' },
-      ],
+    headersEstoque: [
+      { text: 'Codigo', align: ' d-none', value: 'insumo.codigo_insumo', sortable: true },
+      { text: 'Descrição', align: 'start', sortable: true, value: 'insumo.descricao' },
+      { text: 'Pacotes', align: 'center', sortable: false, value: 'pacotes' },
+      { text: 'Unidades', align: 'center', sortable: false, value: 'unidades' },
+      { text: 'Total', align: 'center', sortable: false, value: 'total' }
+    ],
 
-      headersContagemEstoque: [
-        { text: 'Codigo', align: ' d-none', value: 'codigo_insumo', sortable: true },
-        { text: 'Descrição', align: 'start', sortable: true, value: 'descricao' },
-        { text: 'Estoque Inicial', align: 'center', sortable: false, value: 'estoque_inicial' },
-        { text: 'Estoque Final', align: 'center', sortable: false, value: 'estoque_final' },
-        { text: 'Diferencial', align: 'center', sortable: false, value: 'diferencial' },
-        { text: 'Vendas', align: 'center', sortable: false, value: 'vendas' },
-        { text: '', align: 'center', sortable: false, value: 'flag' },
-      ]
-    }),
+    headersRelatorioVendas: [
+      { text: 'Codigo', align: 'center', value: 'produto.codigo_produto', sortable: true },
+      { text: 'Descrição', align: 'start', sortable: true, value: 'produto.descricao' },
+      { text: 'Quantidade', align: 'center', sortable: false, value: 'quantidade' },
+    ],
 
-    mounted() {
-      window.scrollTo(0, 0)
+    headersContagemEstoque: [
+      { text: 'Codigo', align: ' d-none', value: 'codigo_insumo', sortable: true },
+      { text: 'Descrição', align: 'start', sortable: true, value: 'descricao' },
+      { text: 'Estoque Inicial', align: 'center', sortable: false, value: 'estoque_inicial' },
+      { text: 'Estoque Final', align: 'center', sortable: false, value: 'estoque_final' },
+      { text: 'Diferencial', align: 'center', sortable: false, value: 'diferencial' },
+      { text: 'Vendas', align: 'center', sortable: false, value: 'vendas' },
+      { text: '', align: 'center', sortable: false, value: 'flag' },
+    ]
+  }),
+
+  mounted() {
+    window.scrollTo(0, 0)
+  },
+
+  methods: {
+    async importarEstoque(tipo) {
+      this.loading = true
+      const arquivoExcelEstoque = tipo === 'inicial' ? this.arquivoExcelEstoqueInicial : this.arquivoExcelEstoqueFinal
+
+      const formData = new FormData()
+      formData.append("file", arquivoExcelEstoque, arquivoExcelEstoque.name)
+
+      const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/uploadestoque?tipo=${tipo}`, {
+        method: 'POST',
+        body: formData
+      })
+
+      if (tipo === 'inicial') {
+        this.dadosEstoqueInicial = await response.json()
+      }
+      else {
+        this.dadosEstoqueFinal = await response.json()        
+      }
+      this.loading = false
     },
 
-    methods: {
-      async importarEstoque(tipo) {
-        this.loading = true
-        const arquivoExcelEstoque = tipo === 'inicial' ? this.arquivoExcelEstoqueInicial : this.arquivoExcelEstoqueFinal
+    async importarRelatorioVendas() {
+      this.loading = true
+      const formData = new FormData()
+      formData.append("file", this.arquivoExcelRelatorioVendas, this.arquivoExcelRelatorioVendas.name)
 
-        const formData = new FormData()
-        formData.append("file", arquivoExcelEstoque, arquivoExcelEstoque.name)
-
-        const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/uploadestoque?tipo=${tipo}`, {
-          method: 'POST',
-          body: formData
-        })
-
-        if (tipo === 'inicial') {
-          this.dadosEstoqueInicial = await response.json()
-        }
-        else {
-          this.dadosEstoqueFinal = await response.json()        
-        }
-        this.loading = false
-      },
-
-      async importarRelatorioVendas() {
-        this.loading = true
-        const formData = new FormData()
-        formData.append("file", this.arquivoExcelRelatorioVendas, this.arquivoExcelRelatorioVendas.name)
-
-        const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/uploadrelatoriovendas`, {
-          method: 'POST',
-          body: formData
-        })
-        this.dadosRelatorioVendas = await response.json()
-        this.loading = false
-      },
-
-      async processarContagemEstoque() {
-        this.loading = true
-        const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/processarcontagemestoque`)
-        this.dadosContagemEstoque = await response.json()
-        this.loading = false
-      },
-
-      obterCor(diferencial, vendas) {
-        return Math.abs(diferencial) === Math.abs(vendas) ? 'green' : 'red'
-      }
+      const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/uploadrelatoriovendas`, {
+        method: 'POST',
+        body: formData
+      })
+      this.dadosRelatorioVendas = await response.json()
+      this.loading = false
     },
 
-    computed: {
-      habilitarContagemEstoque() {
-        if (this.dadosEstoqueInicial.data && 
-              this.dadosEstoqueFinal.data && 
-              this.dadosRelatorioVendas.data)
-          return true
-        else
-          return false
-      }
+    async processarContagemEstoque() {
+      this.loading = true
+      const response = await fetch(`${process.env.VUE_APP_BASE_URL}/api/processarcontagemestoque`)
+      store.dadosContagemEstoque = await response.json()
+      this.loading = false
     },
 
-    watch: {
-      dadosEstoqueInicial() {
-        this.dadosContagemEstoque = {}
-      }
+    exportarParaExcel() {
+      console.log('exportar resultado para o Excel')
+    },
+
+    obterCor(diferencial, vendas) {
+      return Math.abs(diferencial) === Math.abs(vendas) ? 'green' : 'red'
     }
+  },
 
+  computed: {
+    habilitarContagemEstoque() {
+      return true
+      // if (this.dadosEstoqueInicial.data && 
+      //       this.dadosEstoqueFinal.data && 
+      //       this.dadosRelatorioVendas.data)
+      //   return true
+      // else
+      //   return false
+    }
+  },
+
+  watch: {
+    dadosEstoqueInicial() {
+      store.dadosContagemEstoque = {}
+    },
+
+    dadosEstoqueFinal() {
+      store.dadosContagemEstoque = {}
+    },
+
+    dadosRelatorioVendas() {
+      store.dadosContagemEstoque = {}
+    }
   }
+}
 </script>
