@@ -8,7 +8,7 @@ alias deactivate 'test $?_OLD_VIRTUAL_PATH != 0 && setenv PATH "$_OLD_VIRTUAL_PA
 # Unset irrelevant variables.
 deactivate nondestructive
 
-setenv VIRTUAL_ENV "/home/rspiolirf/Documents/Projects/Python/montana-controle-estoque/flask-backend/venv"
+setenv VIRTUAL_ENV "/home/rspiolirf/Downloads/montana-olds/Python/montana-controle-estoque-oficial/flask-backend/venv"
 
 set _OLD_VIRTUAL_PATH="$PATH"
 setenv PATH "$VIRTUAL_ENV/bin:$PATH"

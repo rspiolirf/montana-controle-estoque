@@ -29,7 +29,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/home/rspiolirf/Documents/Projects/Python/montana-controle-estoque/flask-backend/venv"
+set -gx VIRTUAL_ENV "/home/rspiolirf/Downloads/montana-olds/Python/montana-controle-estoque-oficial/flask-backend/venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH
