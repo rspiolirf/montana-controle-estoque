@@ -36,7 +36,8 @@ class RepositorioEstoque:
       caminho_completo_arquivo_xlsx = f'./{pasta}/{pasta_estoque_final}/{arquivo_xlsx_estoque}'
 
     workbook = openpyxl.load_workbook(caminho_completo_arquivo_xlsx)
-    sheet = workbook['estoque']
+    # sheet = workbook['estoque']
+    sheet = workbook.active
 
     # descobrindo a quantidade de linhas com dados e armazenando na variável "total_linhas_dados"
     linha_inicial_dados = 4
