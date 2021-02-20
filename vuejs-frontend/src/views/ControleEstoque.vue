@@ -178,7 +178,7 @@
 
       <v-stepper-content step="4">
         <v-row>
-          <v-col class="text-center">
+          <v-col class="text-right">
             <v-btn
               color="primary"
               @click="processarContagemEstoque"
