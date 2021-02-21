@@ -16,7 +16,7 @@ class RepositorioInsumo:
     def ObterPorCodigo(self, codigo_insumo):
         insumo = next((insumo for insumo in self.insumos if insumo.codigo_insumo == codigo_insumo), None)
         return insumo
-  
+
     def Adicionar(self, insumoInputModel):
         insumo = Insumo(insumoInputModel['codigo_insumo'], insumoInputModel['descricao'], int(insumoInputModel['unidades_pacote']), int(insumoInputModel['ordem']))
         self.insumos.append(insumo)

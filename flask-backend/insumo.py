@@ -6,9 +6,9 @@ class Insumo:
         self.ordem = int(ordem)
 
     def serialize(self):  
-      return {           
-          'codigo_insumo': self.codigo_insumo, 
-          'descricao': self.descricao,
-          'unidades_pacote': self.unidades_pacote,
-          'ordem': self.ordem
-      }
+        return {           
+            'codigo_insumo': self.codigo_insumo, 
+            'descricao': self.descricao,
+            'unidades_pacote': self.unidades_pacote,
+            'ordem': self.ordem
+        }

@@ -58,8 +58,8 @@ class RepositorioEstoque:
             pacotes = sheet['C' + str(x)].value
             unidades = sheet['D' + str(x)].value
             estoque.adicionarItem(insumo, pacotes, unidades)
-      
+
         return estoque
-  
+
     def Obter(self):
         return self.estoque

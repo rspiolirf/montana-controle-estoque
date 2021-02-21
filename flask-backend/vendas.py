@@ -9,7 +9,7 @@ class Vendas:
 
     def adicionarItem(self, produto, quantidade):
         self.vendas_itens.append(VendasItem(produto, quantidade))
-  
+
     def obterInsumos(self):
         # obter um array de códigos de insumos vendidos distintos
         codigosInsumosDistintos = []

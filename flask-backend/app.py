@@ -29,7 +29,7 @@ def obter_insumos():
     result = []
     for insumo in insumos:
         result.append(insumo.serialize())
-  
+
     return jsonify(result)
 
 @app.route('/api/insumos', methods = ['POST'])
@@ -50,7 +50,7 @@ def atualizar_insumo(id):
         result.append(insumo.serialize())
 
     return jsonify(result)
-  
+
 @app.route('/api/insumos/<id>', methods = ['DELETE'])
 def excluir_insumo(id):
     repositorio_insumo.Excluir(id)
@@ -235,7 +235,7 @@ def exportar_contagem_estoque():
     relatorio_itens_ordenados = sorted(relatorio_itens, key=lambda k: k['ordem'])
     for i, item in enumerate(relatorio_itens_ordenados):
         sheet['A' + str(i + 2)] = item['descricao']
-        sheet['B' + str(i + 2)] = item['estoque_inicial_total']
+        sheet['B' + str(i + 2)] = item['estoque_final_total']
         sheet['C' + str(i + 2)] = item['vendas']
 
     from tempfile import NamedTemporaryFile

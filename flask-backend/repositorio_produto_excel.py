@@ -11,14 +11,14 @@ class RepositorioProduto:
         self.LINHA_INICIAL_DADOS = 2
         self.repositorio_insumo = repositorio_insumo
         self.produtos = self.__Inicializar()
-  
+
     def ObterTodos(self):
         return self.produtos
     
     def ObterPorCodigo(self, codigo_produto):
         produto = next((produto for produto in self.produtos if produto.codigo_produto == codigo_produto), None)
         return produto
-  
+
     def Adicionar(self, produtoInputModel):
         produto_itens =  []
         for produto_item in produtoInputModel['produto_itens']:
@@ -50,7 +50,7 @@ class RepositorioProduto:
         produto = next((produto for produto in self.produtos if produto.codigo_produto == id), None)
         self.produtos.remove(produto)
         self.Salvar()
-  
+
     def __Inicializar(self):
         arquivo_xlsx_banco_de_dados = str(Path(config.banco_de_dados['arquivo']))
         pasta = config.banco_de_dados['pasta']

@@ -10,7 +10,7 @@ class Estoque:
 
     def adicionarItem(self, insumo, pacotes, unidades):
         self.estoque_itens.append(EstoqueItem(insumo, pacotes, unidades))
-   
+
     def obterDiferencial(self, estoque_inicial):
         now = datetime.datetime.now()
         estoque_diferencial = Estoque('Diferencial', now.strftime("%d/%m/%Y"), now.strftime("%H:%M:%S"))
