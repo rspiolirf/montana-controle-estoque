@@ -230,7 +230,7 @@ def exportar_contagem_estoque():
     sheet.title = 'resultado'
 
     sheet['A1'] = 'insumo'
-    sheet['B1'] = 'estoque_inicial_unidades'
+    sheet['B1'] = 'estoque_final_unidades'
     sheet['C1'] = 'vendas_unidades'
     relatorio_itens_ordenados = sorted(relatorio_itens, key=lambda k: k['ordem'])
     for i, item in enumerate(relatorio_itens_ordenados):
