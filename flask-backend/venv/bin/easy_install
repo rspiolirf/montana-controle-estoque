@@ -1,4 +1,4 @@
-#!/home/rspiolirf/Downloads/montana-olds/Python/montana-controle-estoque-oficial/flask-backend/venv/bin/python
+#!/home/rspiolirf/Documents/Projects/Python/montana-controle-estoque/flask-backend/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
