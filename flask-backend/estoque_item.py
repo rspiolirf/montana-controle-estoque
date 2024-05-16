@@ -3,7 +3,8 @@ class EstoqueItem:
         self.insumo = insumo
         self.pacotes = int(pacotes)
         self.unidades = int(unidades)
-        self.total = self.unidades + (self.pacotes * self.insumo.unidades_pacote)
+        self.total = self.unidades + \
+            (self.pacotes * self.insumo.unidades_pacote)
 
     def serialize(self):
         return {
